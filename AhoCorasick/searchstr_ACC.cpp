@@ -11,7 +11,7 @@
  *                              Pattern will read every line a new pattern
  *              output format:  matched count (max to min) ,         its row index in data
  */
-#include "AhoCorasickAlg.hpp"
+#include "AhoCorasickAlg_ACC.hpp"
 
 #define SET_ARRAY_ITEMS_ZERO(arrName) memset(arrName, 0, sizeof(arrName))
 #define FREE_MALLOC_PTR(ptrName) \
@@ -22,17 +22,19 @@
         ptrName = NULL;          \
     }
 
+
 // first arg data, second Pattern
 bool errorhandle(int argc, char *argv[]);
 
-bool cmp(pair<string, int>& a,
-         pair<string, int>& b)
+bool cmp(pair<string, int> &a,
+         pair<string, int> &b)
 {
     return a.second > b.second;
 }
 
 int main(int argc, char *argv[])
 {
+#pragma acc init
     bool bInputCheck;
     string inData;
     string inPattern;
@@ -41,10 +43,10 @@ int main(int argc, char *argv[])
     string Pattern;
     ifstream inFile;
     ofstream outFile;
-    
-    map<string, int> mapOutput;// map<int, set<long>, greater<int>> mapOutput;
-    vector<pair<string, int>> vecoutput;
+
+    map<string, int> mapOutput; // map<int, set<long>, greater<int>> mapOutput;
     vector<string> vecstrdata;
+    vector<pair<string, int>> vecoutput;
 
     clock_t time;
     time = -clock();
@@ -61,13 +63,13 @@ int main(int argc, char *argv[])
     else
     {
         inData = "abcnews-date-text";
-        inPattern = "pattern";
+        inPattern = "Pattern";
     }
 
     // set output location
     outlocation = "MatchedPattern";
     cout << "in data: " << inData << endl;
-    cout << "in Pattern: " << inPattern << endl;
+    cout << "in pattern: " << inPattern << endl;
 
     /* here goes code that new a CAhoTree and match Patterns within data using it*/
     CAhoTree oAhoCorasick(false); // true for case sensitive
@@ -84,18 +86,6 @@ int main(int argc, char *argv[])
     /* here openfile and give data input*/
     inFile.open(inData);
 
-    // while (getline(inFile, strdata))
-    // {
-    //     map<string, int> tempmapOutput = oAhoCorasick.SearchPattern(strdata);
-    //     for (auto it : tempmapOutput){
-    //         if(mapOutput.find(it.first)==mapOutput.end()){
-    //             mapOutput.insert(it);
-    //         }
-    //         else{
-    //             mapOutput[it.first]+=it.second;
-    //         }
-    //     }
-    // }
     while (getline(inFile, strdata)) // traverse every line of input file,
                                      // get pattern match count
                                      // return a in-order map<int patterncount, set<long matched_pattern_in_data_posision>>
@@ -104,9 +94,12 @@ int main(int argc, char *argv[])
     }
 
     int strnum = vecstrdata.size();
+
+#pragma acc parallel loop
     for(int i=0;i<strnum;i++)
     {
         map<string, int> tempmapOutput = oAhoCorasick.SearchPattern(vecstrdata[i]);
+        int mapsize = tempmapOutput.size();
         for (auto it : tempmapOutput)
         {
             if (mapOutput.find(it.first) == mapOutput.end())
@@ -119,6 +112,7 @@ int main(int argc, char *argv[])
             }
         }
     }
+    
     for (auto &it : mapOutput)
     {
         vecoutput.push_back(it);
@@ -135,11 +129,10 @@ int main(int argc, char *argv[])
     for (auto it = vecoutput.begin(); it != vecoutput.end(); it++)
     {
 
-            // cout << it->first << '\t';
-            outFile << left << it->first << '\t';
-            // cout << itvec << '\t';
-            outFile << left << it->second << '\n';
-
+        // cout << it->first << '\t';
+        outFile << left << it->first << '\t';
+        // cout << itvec << '\t';
+        outFile << left << it->second << '\n';
     }
     time += clock();
     outFile << "Time elapsed " << time / (double)CLOCKS_PER_SEC << endl;
@@ -173,6 +166,5 @@ bool errorhandle(int argc, char *argv[])
         // assert(false);
         return false;
     }
-    return false;
+    // return false;
 }
-
