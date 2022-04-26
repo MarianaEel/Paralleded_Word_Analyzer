@@ -100,6 +100,7 @@ int main(int argc, char *argv[])
     {
         map<string, int> tempmapOutput = oAhoCorasick.SearchPattern(vecstrdata[i]);
         int mapsize = tempmapOutput.size();
+        
         for (auto it : tempmapOutput)
         {
             if (mapOutput.find(it.first) == mapOutput.end())
@@ -112,7 +113,7 @@ int main(int argc, char *argv[])
             }
         }
     }
-    
+
     for (auto &it : mapOutput)
     {
         vecoutput.push_back(it);
