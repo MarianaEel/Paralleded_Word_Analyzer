@@ -13,7 +13,11 @@ A Paralleded word matching and ranking algorithm
   - [Algorithm Part:](#algorithm-part)
     - [**Hashmap Word Search**](#hashmap-word-search)
     - [**Aho Corasick Algorithm:**](#aho-corasick-algorithm)
+  - [Parallel Analysis](#parallel-analysis)
+    - [Hashmap](#hashmap)
+    - [Aho-Corasick Tree](#aho-corasick-tree)
   - [Result](#result)
+  - [Analysis and Conclusion](#analysis-and-conclusion)
   - [**Files**](#files)
 
 ----
@@ -142,11 +146,45 @@ Much detailed version can be viewed from the code comment.
 
 ------
 
+## Parallel Analysis
+
+----
+
+### Hashmap
+
+----
+
+
+
+### Aho-Corasick Tree
+
+----
+
+
+
+----
+
 ## Result
 
 ----
 
 ![image](./dataCompare_noted.PNG)
+
+All test running using ```input data = abcnews-date-text```.
+
+The OMP test is running on 8 threads.
+
+The time usage of OMP hashmap search is $0.0811818$, about $\frac{1}{8}$ of serial version time $0.609848$.
+
+The time usage of OMP Aho-Corasick search is $0.688749$, about $\frac{1}{8}$ of serial version time $5.07283$.
+
+----
+
+## Analysis and Conclusion
+
+----
+
+The analysis and conclusion is yet to be drawn.
 
 ----
 
@@ -163,7 +201,7 @@ Much detailed version can be viewed from the code comment.
   - AhoCorasickAlg_OMP.hpp: the omp version of the hpp file
   - searchstr_OMP.cpp: the omp version of the main file
 - Datas
-  - abcnews-date-text: a huge dataset of tweets.
+  - abcnews-date-text: a huge dataset of news.
   - data: a wikipedia page of cat.
   - pattern: the patterns you want to search.
 
