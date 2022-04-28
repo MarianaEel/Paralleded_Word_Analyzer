@@ -25,8 +25,8 @@
 // first arg data, second Pattern
 bool errorhandle(int argc, char *argv[]);
 
-bool cmp(pair<string, int>& a,
-         pair<string, int>& b)
+bool cmp(const pair<string, int> &a,
+         const pair<string, int> &b)
 {
     return a.second > b.second;
 }
@@ -41,13 +41,10 @@ int main(int argc, char *argv[])
     string Pattern;
     ifstream inFile;
     ofstream outFile;
-    
-    map<string, int> mapOutput;// map<int, set<long>, greater<int>> mapOutput;
+
+    map<string, int> mapOutput; // map<int, set<long>, greater<int>> mapOutput;
     vector<pair<string, int>> vecoutput;
     vector<string> vecstrdata;
-
-    clock_t time;
-    time = -clock();
 
     /** errorhandle return bInputCheck fail if input invalid,
      *  use default input data and pattern instead
@@ -104,7 +101,12 @@ int main(int argc, char *argv[])
     }
 
     int strnum = vecstrdata.size();
-    for(int i=0;i<strnum;i++)
+
+    // TIMING LINE 1: Get the starting timestamp.
+    std::chrono::time_point<std::chrono::steady_clock> begin_time =
+        std::chrono::steady_clock::now();
+
+    for (int i = 0; i < strnum; i++)
     {
         map<string, int> tempmapOutput = oAhoCorasick.SearchPattern(vecstrdata[i]);
         for (auto it : tempmapOutput)
@@ -119,6 +121,19 @@ int main(int argc, char *argv[])
             }
         }
     }
+
+    // TIMING LINE 2: Get the ending timestamp.
+    std::chrono::time_point<std::chrono::steady_clock> end_time =
+        std::chrono::steady_clock::now();
+
+    // TIMING LINE 3: Compute the difference.
+    std::chrono::duration<double> difference_in_time = end_time - begin_time;
+
+    // TIMING LINE 4: Get the difference in seconds.
+    double difference_in_seconds = difference_in_time.count();
+    // Print the time.
+    printf("Took %.10f seconds.\n", difference_in_seconds);
+
     for (auto &it : mapOutput)
     {
         vecoutput.push_back(it);
@@ -135,14 +150,12 @@ int main(int argc, char *argv[])
     for (auto it = vecoutput.begin(); it != vecoutput.end(); it++)
     {
 
-            // cout << it->first << '\t';
-            outFile << left << it->first << '\t';
-            // cout << itvec << '\t';
-            outFile << left << it->second << '\n';
-
+        // cout << it->first << '\t';
+        outFile << left << it->first << '\t';
+        // cout << itvec << '\t';
+        outFile << left << it->second << '\n';
     }
-    time += clock();
-    outFile << "Time elapsed " << time / (double)CLOCKS_PER_SEC << endl;
+    outFile << "Time elapsed " << difference_in_seconds  << endl;
 
     outFile.close();
     return 0;
@@ -175,4 +188,3 @@ bool errorhandle(int argc, char *argv[])
     }
     return false;
 }
-

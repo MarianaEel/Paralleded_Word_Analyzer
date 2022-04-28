@@ -16,6 +16,7 @@
 #ifndef _AHOCORASICK_H_
 #define _AHOCORASICK_H_
 //==================Here goes the includes======================//
+#include <chrono>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>

@@ -3,12 +3,60 @@ A Paralleded word matching and ranking algorithm
 
 ------
 
+## Content
+
+----
+- [Paralleded_Word_Analyzer](#paralleded_word_analyzer)
+  - [Content](#content)
+  - [Set up](#set-up)
+    - [Compile](#compile)
+  - [Algorithm Part:](#algorithm-part)
+    - [**Hashmap Word Search**](#hashmap-word-search)
+    - [**Aho Corasick Algorithm:**](#aho-corasick-algorithm)
+  - [Result](#result)
+  - [**Files**](#files)
+
+----
+
+## Set up
+
+----
+The OMP version files is tested running on Boston University SCC server.
+
+Use:
+``` shell
+qrsh -l h_rt=1:00:00 -P paralg
+```
+to rent a server on scc server.
+
+### Compile
+The OMP version cpp file can be compiled using following script:
+``` shell
+$ module load gcc
+$ g++ -o searchstr_map_OMP -fopenmp searchstr_map_OMP.cpp
+$ export OMP_NUM_THREADS = 8
+$ ./searchstr_map_OMP
+```
+
+----
+
 ## Algorithm Part:
 
+----
 
-**Aho Corasick Algorithm:** 
+### **Hashmap Word Search**
+
+
+The Algorithm then read in pattern line by line using `ifstream` and store them in a `unordered_map<string,int>` where `int` is the word count set initial to zero.
+
+Then it read the file to be search and use a `vector<string>` to store it.
+
+Then it use `#pragma omp parallel for` to loop the vector and add to `map[string]->second` to count numbers.
 
 -----
+
+### **Aho Corasick Algorithm:** 
+
 
 **Intro**:
 
@@ -94,8 +142,29 @@ Much detailed version can be viewed from the code comment.
 
 ------
 
-**Files**
+## Result
 
-AhoCorasickAlg.hpp: The algorithm, class CAhoTree.
+----
 
-searchstr.cpp: main function, read input files and generate output file.
+![image](./dataCompare.PNG)
+
+----
+
+## **Files**
+
+----
+
+- Mapsearch
+  - searchstr_map.cpp
+  - searchstr_map_OMP.cpp
+- AhoCorasick
+  - AhoCorasickAlg.hpp: The algorithm, class CAhoTree.
+  - searchstr.cpp: main function, read input files, call Aho-Corasick Tree and generate output file.
+  - AhoCorasickAlg_OMP.hpp: the omp version of the hpp file
+  - searchstr_OMP.cpp: the omp version of the main file
+- Datas
+  - abcnews-date-text: a huge dataset of tweets.
+  - data: a wikipedia page of cat.
+  - pattern: the patterns you want to search.
+
+
