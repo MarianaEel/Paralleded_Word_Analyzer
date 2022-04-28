@@ -146,7 +146,7 @@ Much detailed version can be viewed from the code comment.
 
 ----
 
-![image](./dataCompare.PNG)
+![image](./dataCompare_noted.PNG)
 
 ----
 
